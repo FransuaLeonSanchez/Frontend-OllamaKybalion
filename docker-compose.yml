@@ -6,7 +6,7 @@ services:
     container_name: ollama-kybalion-frontend
     restart: always
     ports:
-      - "8080:80"
+      - "9000:80"
     environment:
       - NODE_ENV=production
     networks:

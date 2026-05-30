@@ -39,7 +39,7 @@ El servidor estará disponible en http://localhost:8080
 sudo docker compose up -d --build
 ```
 
-El servicio estará disponible en http://localhost:6000
+El servicio estará disponible en http://localhost:6001
 
 Para usar un puerto diferente, edita `docker-compose.yml`:
 
@@ -55,7 +55,7 @@ sudo docker build -t ollama-kybalion:latest .
 
 sudo docker run -d \
   --name ollama-kybalion-frontend \
-  -p 6000:80 \
+  -p 6001:80 \
   --restart always \
   ollama-kybalion:latest
 ```

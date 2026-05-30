@@ -1,7 +1,9 @@
-import { EndpointType, FormData } from "@/types/api";
+import { FormData, InputFormat, PresetEndpoint } from "@/types/api";
+
+// Helpers para los endpoints simples test/question (formulario <-> JSON).
 
 export const generateBaseJson = (
-  method: EndpointType,
+  method: PresetEndpoint,
   formData: FormData
 ): string => {
   switch (method) {
@@ -14,7 +16,7 @@ export const generateBaseJson = (
         null,
         2
       );
-    case "question":
+    case "question": {
       const body: Record<string, unknown> = {
         prompt: formData.questionPrompt || "",
       };
@@ -22,84 +24,43 @@ export const generateBaseJson = (
         body.text = formData.questionText;
       }
       return JSON.stringify(body, null, 2);
-    case "custom":
-      return formData.customJson || JSON.stringify(
-        {
-          parametro1: "respuesta1"
-        },
-        null,
-        2
-      );
+    }
     default:
       return "{}";
   }
 };
 
-export const parseJsonToFormData = (
-  jsonString: string,
-  method: EndpointType
-): Partial<FormData> => {
-  try {
-    const parsed = JSON.parse(jsonString);
-    switch (method) {
-      case "test":
-        return {
-          testText: parsed.text || "",
-          testQuestion: parsed.question || "",
-        };
-      case "question":
-        return {
-          questionPrompt: parsed.prompt || "",
-          questionText: parsed.text || "",
-        };
-      case "custom":
-        return {
-          customJson: jsonString,
-        };
-      default:
-        return {};
-    }
-  } catch {
-    return {};
-  }
-};
-
-export const buildRequestBody = (
-  method: EndpointType,
+/** Body para test/question según el formato activo. */
+export const buildSimpleBody = (
+  method: "test" | "question",
   formData: FormData,
   jsonInput: string,
-  inputFormat: "formulario" | "json"
+  inputFormat: InputFormat
 ): Record<string, unknown> => {
-  if (inputFormat === "json" || method === "custom") {
+  if (inputFormat === "json") {
     return JSON.parse(jsonInput);
   }
-
-  switch (method) {
-    case "test":
-      return {
-        text: formData.testText,
-        question: formData.testQuestion,
-      };
-    case "question":
-      const body: Record<string, unknown> = {
-        prompt: formData.questionPrompt,
-      };
-      if (formData.questionText) {
-        body.text = formData.questionText;
-      }
-      return body;
-    default:
-      return {};
+  if (method === "test") {
+    return {
+      text: formData.testText,
+      question: formData.testQuestion,
+    };
   }
+  const body: Record<string, unknown> = { prompt: formData.questionPrompt };
+  if (formData.questionText) {
+    body.text = formData.questionText;
+  }
+  return body;
 };
 
-export const validateFormData = (
-  method: EndpointType,
+/** Validación de los endpoints simples. Devuelve mensaje de error o null. */
+export const validateSimpleForm = (
+  method: "test" | "question",
   formData: FormData,
-  inputFormat: "formulario" | "json",
+  inputFormat: InputFormat,
   jsonInput: string
 ): string | null => {
-  if (inputFormat === "json" || method === "custom") {
+  if (inputFormat === "json") {
     try {
       JSON.parse(jsonInput);
       return null;
@@ -108,19 +69,15 @@ export const validateFormData = (
     }
   }
 
-  switch (method) {
-    case "test":
-      if (!formData.testText || !formData.testQuestion) {
-        return "Por favor completa todos los campos";
-      }
-      break;
-    case "question":
-      if (!formData.questionPrompt) {
-        return "Por favor completa el campo prompt";
-      }
-      break;
+  if (method === "test") {
+    if (!formData.testText || !formData.testQuestion) {
+      return "Por favor completa todos los campos";
+    }
+  } else if (method === "question") {
+    if (!formData.questionPrompt) {
+      return "Por favor completa el campo prompt";
+    }
   }
 
   return null;
 };
-

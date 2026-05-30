@@ -1,6 +1,15 @@
 # Frontend-OllamaKybalion
 
-Interfaz web para interactuar con la API de análisis de texto OllamaKybalion. Construida con React, TypeScript y Tailwind CSS.
+Interfaz web tipo Postman para probar la API de análisis de texto OllamaKybalion. Construida con React, TypeScript y Tailwind CSS.
+
+## Características
+
+- Endpoints predefinidos (`/test`, `/question`, `/custom`) y **endpoint personalizado** con ruta editable
+- Selección de **verbo HTTP** (GET/POST/PUT/PATCH/DELETE) para custom/personalizado
+- Editor de body en **modo campos** (clave-valor estilo Postman) o **JSON**, sincronizados
+- Pestañas de **Headers** y **Autenticación** (Bearer / API Key / Basic)
+- **Copiar como cURL** del request configurado
+- Respuesta con **status, tiempo y tamaño**, vista JSON o formulario
 
 ## Tecnologías
 
@@ -77,4 +86,9 @@ sudo docker rm ollama-kybalion-frontend
 
 # Reiniciar
 sudo docker restart ollama-kybalion-frontend
+
+# Verificar healthcheck
+curl http://localhost:6001/health
 ```
+
+> Nota: el puerto 6000 lo bloquea Chrome (`ERR_UNSAFE_PORT`). Por eso se usa 6001.

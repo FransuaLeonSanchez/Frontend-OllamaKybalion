@@ -1,12 +1,13 @@
 services:
-  frontend:
+  kybalion:
     build:
       context: .
       dockerfile: Dockerfile
+    image: ollama-kybalion:latest
     container_name: ollama-kybalion-frontend
     restart: always
     ports:
-      - "9000:80"
+      - "6000:80"
     environment:
       - NODE_ENV=production
     networks:
@@ -15,4 +16,3 @@ services:
 networks:
   kybalion-network:
     driver: bridge
-
